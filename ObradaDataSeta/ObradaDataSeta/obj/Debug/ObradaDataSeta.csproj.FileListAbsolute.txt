@@ -1,0 +1,7 @@
+C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\bin\Debug\ObradaDataSeta.exe.config
+C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\bin\Debug\ObradaDataSeta.exe
+C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\bin\Debug\ObradaDataSeta.pdb
+C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.csprojAssemblyReference.cache
+C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.csproj.CoreCompileInputs.cache
+C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.exe
+C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.pdb
