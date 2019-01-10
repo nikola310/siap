@@ -5,3 +5,10 @@ C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Deb
 C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.csproj.CoreCompileInputs.cache
 C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.exe
 C:\Users\vukbo\OneDrive\Desktop\DataMining\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.pdb
+C:\Users\Nikola\Documents\Git\siap\ObradaDataSeta\ObradaDataSeta\bin\Debug\ObradaDataSeta.exe.config
+C:\Users\Nikola\Documents\Git\siap\ObradaDataSeta\ObradaDataSeta\bin\Debug\ObradaDataSeta.exe
+C:\Users\Nikola\Documents\Git\siap\ObradaDataSeta\ObradaDataSeta\bin\Debug\ObradaDataSeta.pdb
+C:\Users\Nikola\Documents\Git\siap\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.csprojAssemblyReference.cache
+C:\Users\Nikola\Documents\Git\siap\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.csproj.CoreCompileInputs.cache
+C:\Users\Nikola\Documents\Git\siap\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.exe
+C:\Users\Nikola\Documents\Git\siap\ObradaDataSeta\ObradaDataSeta\obj\Debug\ObradaDataSeta.pdb
