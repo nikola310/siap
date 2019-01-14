@@ -11,11 +11,29 @@ train, test = train_test_split(data, test_size=0.3)
 
 #print(len(train))
 
-ridgereg = Ridge(alpha=1.0, copy_X=True, normalize=True)
+players = train.PLAYER_ID.unique()
+models = {}
 
-ridgereg.fit(train['DEFENSIVE_RATING'].values.reshape(-1, 1), train['POINTS'])
-print(ridgereg)
+for val in players:
+    ridgereg = Ridge(alpha=1.0, copy_X=True, normalize=True)
+    is_player = train['PLAYER_ID'] == val
+    subset = train[is_player]
+    ridgereg.fit(subset['DEFENSIVE_RATING'].values.reshape(-1, 1), subset['POINTS'])
+    models[val] = ridgereg
 
-prediction = ridgereg.predict(test['DEFENSIVE_RATING'].values.reshape(-1, 1))
+players_test = test.PLAYER_ID.unique()
+res = {}
 
-print(prediction)
+for val in players_test:
+    is_player = test['PLAYER_ID'] == val
+    subset = test[is_player]
+    prediction = models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
+    print(prediction)
+
+
+#ridgereg.fit(train['DEFENSIVE_RATING'].values.reshape(-1, 1), train['POINTS'])
+#print(ridgereg)
+
+#prediction = ridgereg.predict(test['DEFENSIVE_RATING'].values.reshape(-1, 1))
+
+#print(prediction)
