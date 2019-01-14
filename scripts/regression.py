@@ -24,12 +24,31 @@ for val in players:
 players_test = test.PLAYER_ID.unique()
 res = {}
 
+
+players_test = test.PLAYER_ID.unique()
+res = {}
+
 for val in players_test:
     is_player = test['PLAYER_ID'] == val
     subset = test[is_player]
     prediction = models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
+    name = subset['PLAYER_NAME'].values[0]
+    print('Player: ' + name)
     print(prediction)
 
+print('===========================================================================')
+print('Test set')
+print(test)
+'''
+is_player = test['PLAYER_ID'] == 203148
+subset = test[is_player]
+prediction = models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
+print(prediction)
+print('----------------------------------------------------')
+print(test[is_player])
+'''
+#print('{} {}'.format(test[is_player]['PLAYER_ID'], test[is_player]['POINTS']))
+#print(test['PLAYER_ID'] + ' ' + test['POINTS'])
 
 #ridgereg.fit(train['DEFENSIVE_RATING'].values.reshape(-1, 1), train['POINTS'])
 #print(ridgereg)
