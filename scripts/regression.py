@@ -3,56 +3,90 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import Ridge
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import Ridge, Lasso
 
 data = pd.read_csv("../data/dataSet_processed.csv")
-
+data.drop("GAME_ID", axis=1, inplace=True)
+data.drop("LOCATION", axis=1, inplace=True)
+data.drop("W/L", axis=1, inplace=True)
+data.drop("FINAL_MARGIN", axis=1, inplace=True)
+data.drop("MONTH", axis=1, inplace=True)
 train, test = train_test_split(data, test_size=0.3)
 
-#print(len(train))
-
 players = train.PLAYER_ID.unique()
-models = {}
 
+### 1 - Lasso regression
+lasso_models = {}
 for val in players:
-    ridgereg = Ridge(alpha=1.0, copy_X=True, normalize=True)
+
     is_player = train['PLAYER_ID'] == val
     subset = train[is_player]
-    ridgereg.fit(subset['DEFENSIVE_RATING'].values.reshape(-1, 1), subset['POINTS'])
-    models[val] = ridgereg
 
-players_test = test.PLAYER_ID.unique()
-res = {}
+    ### Perform grid search to find best parameters
+    alphas = np.linspace(15.0, 0.0, 150).reshape(-1)
+    alphas = np.asarray(alphas)
+    fit_interceptOptions = ([True, False])
+    normalize = ([True, False])
 
+    lassoreg = Lasso()
+    grid = GridSearchCV(estimator=lassoreg, param_grid=dict(alpha=alphas, fit_intercept=fit_interceptOptions, normalize=normalize), cv=5, scoring='r2')
+    
+    grid.fit(subset['DEFENSIVE_RATING'].values.reshape(-1, 1), subset['POINTS'])
+    ### Summarize the results of the grid search
+    print('Best score: ' + str(grid.best_score_))
+    print('Alpha: ' + str(grid.best_estimator_.alpha))
+    print('Fit intercept: ' + str(grid.best_estimator_.fit_intercept))
+    
+    ## Just train with best parameters
+    ##
+    ##
+    ##
+    
+    lasso_models[val] = grid.best_estimator_
 
-players_test = test.PLAYER_ID.unique()
-res = {}
-
-for val in players_test:
+    
+### Testing Lasso regression
+for val in players:
     is_player = test['PLAYER_ID'] == val
     subset = test[is_player]
-    prediction = models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
-    name = subset['PLAYER_NAME'].values[0]
-    print('Player: ' + name)
-    print(prediction)
+    
+    prediction = lasso_models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
 
-print('===========================================================================')
-print('Test set')
-print(test)
-'''
-is_player = test['PLAYER_ID'] == 203148
-subset = test[is_player]
-prediction = models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
-print(prediction)
-print('----------------------------------------------------')
-print(test[is_player])
-'''
-#print('{} {}'.format(test[is_player]['PLAYER_ID'], test[is_player]['POINTS']))
-#print(test['PLAYER_ID'] + ' ' + test['POINTS'])
+### 2 - Ridge regression
+ridge_models = {}
+for val in players:
 
-#ridgereg.fit(train['DEFENSIVE_RATING'].values.reshape(-1, 1), train['POINTS'])
-#print(ridgereg)
+    is_player = train['PLAYER_ID'] == val
+    subset = train[is_player]
 
-#prediction = ridgereg.predict(test['DEFENSIVE_RATING'].values.reshape(-1, 1))
+    ### Perform grid search to find best parameters
+    alphas = np.linspace(15.0, 0.0, 150).reshape(-1)
+    alphas = np.asarray(alphas)
+    fit_interceptOptions = ([True, False])
+    solverOptions = (['svd', 'cholesky', 'sparse_cg', 'sag'])
+    normalize = ([True, False])
+    ridgereg = Ridge()
+    grid = GridSearchCV(estimator=ridgereg, param_grid=dict(alpha=alphas, fit_intercept=fit_interceptOptions, solver=solverOptions, normalize=normalize), cv=5)
+    
+    grid.fit(subset['DEFENSIVE_RATING'].values.reshape(-1, 1), subset['POINTS'])
+    ### Summarize the results of the grid search
+    print('Best score: ' + str(grid.best_score_))
+    print('Alpha: ' + str(grid.best_estimator_.alpha))
+    print('Fit intercept: ' + str(grid.best_estimator_.fit_intercept))
+    print('Solver: ' + str(grid.best_estimator_.solver))
+    
+    ## Just train with best parameters
+    ##
+    ##
+    ##
+    
+    ridge_models[val] = grid.best_estimator_
 
-#print(prediction)
+    
+### Testing Ridge regression
+for val in players:
+    is_player = test['PLAYER_ID'] == val
+    subset = test[is_player]
+    
+    prediction = ridge_models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
