@@ -26,17 +26,17 @@ for val in players:
     ### Perform grid search to find best parameters
     alphas = np.linspace(15.0, 0.0, 150).reshape(-1)
     alphas = np.asarray(alphas)
-    fit_interceptOptions = ([True, False])
     normalize = ([True, False])
 
-    lassoreg = Lasso()
-    grid = GridSearchCV(estimator=lassoreg, param_grid=dict(alpha=alphas, fit_intercept=fit_interceptOptions, normalize=normalize), cv=5, scoring='r2')
+    lassoreg = Lasso(tol=0.001, max_iter=1000)
+    grid = GridSearchCV(estimator=lassoreg, param_grid=dict(alpha=alphas, normalize=normalize), cv=5, scoring='r2')
     
     grid.fit(subset['DEFENSIVE_RATING'].values.reshape(-1, 1), subset['POINTS'])
     ### Summarize the results of the grid search
     print('Best score: ' + str(grid.best_score_))
     print('Alpha: ' + str(grid.best_estimator_.alpha))
-    print('Fit intercept: ' + str(grid.best_estimator_.fit_intercept))
+    print('Fit intercept: ' + str(grid.best_estimator_.normalize))
+
     
     ## Just train with best parameters
     ##
@@ -53,6 +53,11 @@ for val in players:
     
     prediction = lasso_models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
 
+    #train_rdf_err = 1-(predict_rdf_train == train_target).mean()
+    err = 1 - (prediction == subset['POINTS']).mean()
+    print(err)
+
+'''
 ### 2 - Ridge regression
 ridge_models = {}
 for val in players:
@@ -90,3 +95,4 @@ for val in players:
     subset = test[is_player]
     
     prediction = ridge_models[val].predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
+'''
