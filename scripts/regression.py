@@ -60,6 +60,7 @@ for val in players:
     for val1 in prediction:
         compare[val1]=subset['POINTS'].values[cnt]
         cnt+= 1
+    print('----Predictions: real')
     print(compare)
     
     for val2 in compare:
@@ -69,7 +70,6 @@ for val in players:
     #train_rdf_err = 1-(predict_rdf_train == train_target).mean()
     #err = 1 - (prediction == subset['POINTS']).mean()
     print('----Error is: ' + str(err*100) + '%')
-    print('-----Prediction: ' + str(prediction))
 '''
 ### 2 - Ridge regression
 ridge_models = {}
