@@ -5,6 +5,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.datasets import make_friedman1
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 data = pd.read_csv("../data/dataSet_processed.csv")
 data.drop("GAME_ID", axis=1, inplace=True)
@@ -30,3 +31,5 @@ for val in players:
     print(subset)
     print('===================================================')
     print(prediction)
+    tmp = np.array(subset['POINTS'], dtype=pd.Series)
+    print("Accuracy Score -> ", est.score(prediction.reshape(-1, 1), tmp.reshape(-1, 1)))

@@ -21,5 +21,10 @@ data["AWAY_TEAM"] = teams[2]
 data["TEAM"] = np.where(data["LOCATION"] == "H", data["HOME_TEAM"], data["AWAY_TEAM"])
 data["OPPOSING_TEAM"] = np.where(data["LOCATION"] == "H", data["AWAY_TEAM"], data["HOME_TEAM"])
 data.drop(["TEAMS", "HOME_TEAM", "AWAY_TEAM"], axis=1, inplace=True)
+data.drop("GAME_ID", axis=1, inplace=True)
+data.drop("LOCATION", axis=1, inplace=True)
+data.drop("W/L", axis=1, inplace=True)
+data.drop("FINAL_MARGIN", axis=1, inplace=True)
+data.drop("MONTH", axis=1, inplace=True)
 
 data.to_csv("../data/dataSet_processed.csv")
