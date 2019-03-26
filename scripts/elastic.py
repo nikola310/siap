@@ -8,35 +8,33 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import ElasticNet
 
 data = pd.read_csv("../data/dataSet_processed.csv")
-data.drop("GAME_ID", axis=1, inplace=True)
-data.drop("LOCATION", axis=1, inplace=True)
-data.drop("W/L", axis=1, inplace=True)
-data.drop("FINAL_MARGIN", axis=1, inplace=True)
-data.drop("MONTH", axis=1, inplace=True)
 #train, test = train_test_split(data, test_size=0.3)
 players = data.PLAYER_ID.unique()
 
+train = {}
+test = {}
+for val in players:
+    is_player = data['PLAYER_ID'] == val
+    subset = data[is_player]
+    train_tmp, test_tmp = train_test_split(subset, test_size=0.3)
+    train[val] = train_tmp
+    test[val] = test_tmp
 
 finalError=[]
 for val in players:
 
     errors=[]
-    is_player = data['PLAYER_ID'] == val
-    subset = data[is_player]
-    train, test = train_test_split(subset, test_size=0.3)
 
     ENreg = ElasticNet(alpha=0.5, l1_ratio=0.5, normalize=False)
-    ENreg.fit(train['DEFENSIVE_RATING'].values.reshape(-1, 1), train['POINTS'])
-    is_player = test['PLAYER_ID'] == val
-    subset = test[is_player]
+    ENreg.fit(train[val]['DEFENSIVE_RATING'].values.reshape(-1, 1), train[val]['POINTS'])
     
-    prediction = ENreg.predict(subset['DEFENSIVE_RATING'].values.reshape(-1, 1))
+    prediction = ENreg.predict(test[val]['DEFENSIVE_RATING'].values.reshape(-1, 1))
     #print(subset)
     prediction = np.round(prediction,0)
     cnt=0
     compare={}
     for val1 in prediction:
-        compare[val1]=subset['POINTS'].values[cnt]
+        compare[val1]=test[val]['POINTS'].values[cnt]
         cnt+= 1
         
     print('----Predictions: real')
