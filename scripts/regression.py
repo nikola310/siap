@@ -46,12 +46,11 @@ for val in players:
     prediction = np.round(prediction,0)
     
     for i in range(len(prediction)):
-        #print(test[val]['POINTS'].values[i])
         errors2.append(abs(prediction[i] - test[val]['POINTS'].values[i]))
     #print(str(errors2))
     err2 = np.mean(errors2)
     finalError.append(err2)
-    print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
+    #print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
 
 print('----Average error for all players (lasso regression): ' + str(np.mean(finalError)) + ' points')  
 print('-------------------------------------------------------------------------------------------')
@@ -62,24 +61,9 @@ print('-------------------------------------------------------------------------
 ridge_models = {}
 for val in players:
 
-    #is_player = train['PLAYER_ID'] == val
-    #subset = train[is_player]
-
-    ### Perform grid search to find best parameters
-    #alphas = np.linspace(15.0, 0.0, 150).reshape(-1)
-    #alphas = np.asarray(alphas)
-    #fit_interceptOptions = ([True, False])
-    #solverOptions = (['svd', 'cholesky', 'sparse_cg', 'sag'])
-    #normalize = ([True, False])
-    ridgereg = Ridge(normalize=True, fit_intercept=False, alpha=1.0)
-    #grid = GridSearchCV(estimator=ridgereg, param_grid=dict(alpha=alphas, fit_intercept=fit_interceptOptions, solver=solverOptions, normalize=normalize), cv=5)
+    ridgereg = Ridge(normalize=True, fit_intercept=False, alpha=0.95)
     
     ridgereg.fit(train[val]['DEFENSIVE_RATING'].values.reshape(-1, 1), train[val]['POINTS'])
-    ### Summarize the results of the grid search
-    #print('Best score: ' + str(grid.best_score_))
-    #print('Alpha: ' + str(grid.best_estimator_.alpha))
-    #print('Fit intercept: ' + str(grid.best_estimator_.fit_intercept))
-    #print('Solver: ' + str(grid.best_estimator_.solver))
     
     ridge_models[val] = ridgereg
 
@@ -97,7 +81,7 @@ for val in players:
     #print(str(errors2))
     err2 = np.mean(errors2)
     finalError.append(err2)
-    print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
+    #print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
 
 print('----Average error for all players (ridge regression): ' + str(np.mean(finalError)) + ' points')  
 print('-------------------------------------------------------------------------------------------')

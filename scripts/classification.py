@@ -1,13 +1,6 @@
-import json
-from collections import defaultdict
-
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pylab as pl
-from nltk import pos_tag
-from nltk.corpus import wordnet as wn
-from nltk.tokenize import word_tokenize
 from sklearn import model_selection, naive_bayes, svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score
@@ -17,19 +10,13 @@ from sklearn.preprocessing import LabelEncoder
 
 def runScript():
     data = pd.read_csv("../data/dataSet_processed.csv")
-    #train, test = train_test_split(data, test_size=0.3)
-    players = data.PLAYER_ID.unique()
     games = data.GAME_ID.unique()
-
-    train = {}
-    test = {}
 
     train_games, test_games = train_test_split(games, test_size=0.3)
 
     Encoder = LabelEncoder()
     data['OUTCOME'] = Encoder.fit_transform(data['W/L'])
     
-    out_df = pd.DataFrame()
     pointsAll = []
 
     
@@ -38,21 +25,17 @@ def runScript():
 
 
     #test_x = np.array([np.array(xi) for xi in pointsAll])
-    Naive = naive_bayes.MultinomialNB()
-    Naive.fit(train_x, train_y)
+    naive = naive_bayes.MultinomialNB()
+    naive.fit(train_x, train_y)
 
-    predictions_NB = Naive.predict(test_x)
-    print("Naive Bayes Accuracy Score -> ", accuracy_score(predictions_NB, test_y)*100)
+    predictions_nb = naive.predict(test_x)
+    print("Naive Bayes Accuracy Score -> ", accuracy_score(predictions_nb, test_y)*100)
 
     SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
     SVM.fit(train_x, train_y)
 
     predictions_SVM = SVM.predict(test_x)    
     print("SVM Accuracy Score -> ",accuracy_score(predictions_SVM, test_y)*100)
-
-
-
-    print('Kraj')
 
 def getPointsForGames(games, data):
 
@@ -66,15 +49,15 @@ def getPointsForGames(games, data):
         #away = subset[subset.LOCATION == 'A']
         if len(home) < 12:
             for i in range(12 - len(home)):
-                new_row = pd.DataFrame({'GAME_ID' : [home['GAME_ID'].iloc[0]], 
-                                        'LOCATION' : ['H'], 
-                                        'W/L' : [home['W/L'].iloc[0]], 
-                                        'DEFENSIVE_RATING' : [home['DEFENSIVE_RATING'].iloc[0]], 
-                                        'PLAYER_NAME' : [''], 
-                                        'PLAYER_ID' : [i], 
-                                        'POINTS' : [0], 
-                                        'TEAM' : [home['TEAM'].iloc[0]], 
-                                        'OPPOSING_TEAM' : [home['OPPOSING_TEAM'].iloc[0]], 
+                new_row = pd.DataFrame({'GAME_ID' : [home['GAME_ID'].iloc[0]],
+                                        'LOCATION' : ['H'],
+                                        'W/L' : [home['W/L'].iloc[0]],
+                                        'DEFENSIVE_RATING' : [home['DEFENSIVE_RATING'].iloc[0]],
+                                        'PLAYER_NAME' : [''],
+                                        'PLAYER_ID' : [i],
+                                        'POINTS' : [0],
+                                        'TEAM' : [home['TEAM'].iloc[0]],
+                                        'OPPOSING_TEAM' : [home['OPPOSING_TEAM'].iloc[0]],
                                         'OUTCOME' : [home['OUTCOME'].iloc[0]]})
                 home = pd.concat([home, new_row]).reset_index(drop=True)
 

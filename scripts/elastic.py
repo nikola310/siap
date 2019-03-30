@@ -23,7 +23,7 @@ for val in players:
 finalError=[]
 for val in players:
 
-    errors=[]
+    errors2=[]
 
     ENreg = ElasticNet(alpha=0.5, l1_ratio=0.5, normalize=False)
     ENreg.fit(train[val]['DEFENSIVE_RATING'].values.reshape(-1, 1), train[val]['POINTS'])
@@ -37,27 +37,12 @@ for val in players:
         compare[val1]=test[val]['POINTS'].values[cnt]
         cnt+= 1
         
-    print('----Predictions: real')
-    print(compare)
-    
-    for val2 in compare:
-        if compare[val2]!=0:
-            errors.append(abs(val2-compare[val2])/compare[val2])
-        else:
-            errors.append(val2)
-    print('Errors for each prediction: ')
-    print(str(errors))
-    err=np.mean(errors)
-    finalError.append(err*100)
-    print('----Average error for player is: ' + str(err*100) + '%')
-    print('===================================================')
+    for i in range(len(prediction)):
+        errors2.append(abs(prediction[i] - test[val]['POINTS'].values[i]))
 
+    err2 = np.mean(errors2)
+    finalError.append(err2)
+    #print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
 
-print('Final error for all: ' + str(np.mean(finalError)))
-    #pred_cv = ENreg.predict(x_cv)
-
-    #calculating mse
-
-    #mse = np.mean((pred_cv - y_cv)**2)
-    #print(mse)
-    #ENreg.score(x_cv,y_cv)
+print('----Average error for all players (lasso regression): ' + str(np.mean(finalError)) + ' points')
+print('-------------------------------------------------------------------------------------------')

@@ -21,29 +21,25 @@ for val in players:
     test[val] = test_tmp
 
 for val in players:
-    est = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=1, random_state=0, loss='ls')
+    est = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=0.5, random_state=0, loss='ls')
     est.fit(train[val]['DEFENSIVE_RATING'].values.reshape(-1, 1), train[val]['POINTS'])
 
 
-errors=[] 
+finalError=[]
 ### Test
-for val in players:    
+for val in players:
+    errors2 = [] 
     prediction = est.predict(test[val]['DEFENSIVE_RATING'].values.reshape(-1, 1))
 
     prediction = np.round(prediction,0)
     cnt=0
     compare={}
-    for val1 in prediction:
-        compare[val1]=test[val]['POINTS'].values[cnt]
-        cnt+= 1
-    print('----Predictions: real')
-    print(compare)
-    
-    for val2 in compare:
-        errors.append(abs(val2-compare[val2])/compare[val2])
-    print(str(errors))
-    err=np.mean(errors)
-    #train_rdf_err = 1-(predict_rdf_train == train_target).mean()
-    #err = 1 - (prediction == subset['POINTS']).mean()
-    print('----Error is: ' + str(err*100) + '%')
-    #print("Accuracy Score -> ", est.score(prediction.reshape(-1, 1), test[val]['POINTS']))
+    for i in range(len(prediction)):
+        errors2.append(abs(prediction[i] - test[val]['POINTS'].values[i]))
+
+    err2 = np.mean(errors2)
+    finalError.append(err2)
+    #print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
+
+print('----Average error for all players (lasso regression): ' + str(np.mean(finalError)) + ' points')  
+print('-------------------------------------------------------------------------------------------')
