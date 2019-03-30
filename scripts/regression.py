@@ -10,8 +10,8 @@ np.random.seed(500)
 
 data = pd.read_csv("../data/dataSet_processed.csv")
 test={}
-players = [203148, 202687, 2744, 203469, 202390, 201945, 202689, 203077]
-#players = data.PLAYER_ID.unique()
+#players = [203148, 202687, 2744, 203469, 202390, 201945, 202689, 203077]
+players = data.PLAYER_ID.unique()
 
 # Split test and train dataset for each player
 train = {}
@@ -38,38 +38,26 @@ for val in players:
     lasso_models[val] = lassoreg
     #lasso_models[val] = grid.best_estimator_
 
+finalError=[]
 ### Testing Lasso regression
 for val in players:
-    errors = []
     errors2 = []
     prediction = lasso_models[val].predict(test[val]['DEFENSIVE_RATING'].values.reshape(-1, 1))
-
     prediction = np.round(prediction,0)
-    cnt=0
-    compare={}
-    for val1 in prediction:
-        compare[val1]=test[val]['POINTS'].values[cnt]
-        cnt+= 1
-    print('----Predictions: real')
-    print(compare)
-    #print(prediction)
-    #print(test[val]['POINTS'])
-    for val2 in compare:
-        errors.append(abs(val2-compare[val2])/compare[val2])
-
-
-    for i in range(len(prediction)):
-        print(test[val]['POINTS'].values[i])
-        errors2.append(abs(prediction[i] - test[val]['POINTS'].values[i]) / test[val]['POINTS'].values[i])
-    print(str(errors2))
-    err=np.mean(errors)
-    err2 = np.mean(errors2)
-    #train_rdf_err = 1-(predict_rdf_train == train_target).mean()
-    #err = 1 - (prediction == subset['POINTS']).mean()
-    print('----Error is: ' + str(err*100) + '%')
-    print('----Error2 is: ' + str(err2*100) + '%')
     
-print('----------------------------------------------------------')
+    for i in range(len(prediction)):
+        #print(test[val]['POINTS'].values[i])
+        errors2.append(abs(prediction[i] - test[val]['POINTS'].values[i]))
+    #print(str(errors2))
+    err2 = np.mean(errors2)
+    finalError.append(err2)
+    print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
+
+print('----Average error for all players (lasso regression): ' + str(np.mean(finalError)) + ' points')  
+print('-------------------------------------------------------------------------------------------')
+
+
+
 ### 2 - Ridge regression
 ridge_models = {}
 for val in players:
@@ -97,23 +85,19 @@ for val in players:
 
     
 ### Testing Ridge regression
-errors=[]
-for val in players:    
+finalError=[]
+for val in players:  
+    errors2 = []
     prediction = ridge_models[val].predict(test[val]['DEFENSIVE_RATING'].values.reshape(-1, 1))
-
     prediction = np.round(prediction,0)
-    cnt=0
-    compare={}
-    for val1 in prediction:
-        compare[val1]=test[val]['POINTS'].values[cnt]
-        cnt+= 1
-    #print('----Predictions: real')
-    #print(compare)
     
-    for val2 in compare:
-        errors.append(abs(val2-compare[val2])/compare[val2])
-    #print(str(errors))
-    err=np.mean(errors)
-    #train_rdf_err = 1-(predict_rdf_train == train_target).mean()
-    #err = 1 - (prediction == subset['POINTS']).mean()
-    print('----Error is: ' + str(err*100) + '%')
+    for i in range(len(prediction)):
+        #print(test[val]['POINTS'].values[i])
+        errors2.append(abs(prediction[i] - test[val]['POINTS'].values[i]))
+    #print(str(errors2))
+    err2 = np.mean(errors2)
+    finalError.append(err2)
+    print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
+
+print('----Average error for all players (ridge regression): ' + str(np.mean(finalError)) + ' points')  
+print('-------------------------------------------------------------------------------------------')
