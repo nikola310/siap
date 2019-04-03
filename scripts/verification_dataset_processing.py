@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import csv
 
@@ -31,8 +30,7 @@ for game in data.values:
     print(game)
 
 with open('../data/season1516processed.csv', 'w', newline='') as myfile:
-    wr=csv.writer(myfile,quoting=csv.QUOTE_ALL)
-    wr.writerow(['DATE','START','VISITOR','V_PTS','HOME','H_PTS','OT','ATTENDANCE','V_DEFRTG','H_DEFRTG'])
+    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+    wr.writerow(['DATE', 'START', 'VISITOR', 'V_PTS', 'HOME', 'H_PTS', 'OT', 'ATTENDANCE', 'V_DEFRTG', 'H_DEFRTG'])
     for row in processed:
         wr.writerow(row)
-

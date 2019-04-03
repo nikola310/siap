@@ -1,18 +1,16 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-from sklearn.linear_model import Ridge, Lasso
 
 np.random.seed(500)
 
 data = pd.read_csv("../data/dataSet_processed.csv")
-test={}
+test = {}
 #players = [203148, 202687, 2744, 203469, 202390, 201945, 202689, 203077]
-players = data.PLAYER_ID.unique()
-
+players = data.PLAYER_NAME.unique() #data.PLAYER_ID.unique()
+#print(len(data.PLAYER_ID.unique()))
+#print(len(data.PLAYER_NAME.unique()))
 # Split test and train dataset for each player
 train = {}
 test = {}

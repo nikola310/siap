@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import pylab as pl
 from sklearn import model_selection, naive_bayes, svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score
@@ -16,10 +15,10 @@ def runScript():
 
     Encoder = LabelEncoder()
     data['OUTCOME'] = Encoder.fit_transform(data['W/L'])
-    
+
     pointsAll = []
 
-    
+
     (train_x, train_y) = getPointsForGames(train_games, data)
     (test_x, test_y) = getPointsForGames(test_games, data)
 
