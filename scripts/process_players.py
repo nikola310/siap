@@ -36,11 +36,6 @@ def run_script():
         if player_name in player_diff:
             teams_players[team].add(player_name)
 
-    suma = 0
-    probni_set = set()
-    for team in teams_players:
-        probni_set.update(teams_players[team])
-    print(len(probni_set))
     with open('teams_players.json', 'w') as file:
         json.dump(teams_players, file, sort_keys=True, indent=4, default=set_default)
 
