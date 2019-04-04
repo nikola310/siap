@@ -15,7 +15,7 @@ players = data.PLAYER_NAME.unique() #data.PLAYER_ID.unique()
 train = {}
 test = {}
 for val in players:
-    is_player = data['PLAYER_ID'] == val
+    is_player = data['PLAYER_NAME'] == val
     subset = data[is_player]
     train_tmp, test_tmp = train_test_split(subset, test_size=0.3)
     train[val] = train_tmp
