@@ -1,21 +1,23 @@
 import numpy as np
 import pandas as pd
+import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import ElasticNet
 
 data = pd.read_csv("../data/dataSet_processed.csv")
 #train, test = train_test_split(data, test_size=0.3)
-players = data.PLAYER_ID.unique()
+players = data.PLAYER_NAME.unique()
 
 train = {}
 test = {}
 for val in players:
-    is_player = data['PLAYER_ID'] == val
+    is_player = data['PLAYER_NAME'] == val
     subset = data[is_player]
     train_tmp, test_tmp = train_test_split(subset, test_size=0.3)
     train[val] = train_tmp
     test[val] = test_tmp
 
+elastic_models={}
 finalError=[]
 for val in players:
 
@@ -23,7 +25,8 @@ for val in players:
 
     ENreg = ElasticNet(alpha=0.5, l1_ratio=0.5, normalize=False)
     ENreg.fit(train[val]['DEFENSIVE_RATING'].values.reshape(-1, 1), train[val]['POINTS'])
-
+    elastic_models[val]=ENreg
+    
     prediction = ENreg.predict(test[val]['DEFENSIVE_RATING'].values.reshape(-1, 1))
     #print(subset)
     prediction = np.round(prediction, 0)
@@ -42,3 +45,5 @@ for val in players:
 
 print('----Average error for all players (lasso regression): ' + str(np.mean(finalError)) + ' points')
 print('-------------------------------------------------------------------------------------------')
+
+pickle.dump(elastic_models, open('elastic_models.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
