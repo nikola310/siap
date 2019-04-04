@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import Lasso, Ridge
@@ -83,3 +85,6 @@ for val in players:
 
 print('----Average error for all players (ridge regression): ' + str(np.mean(finalError)) + ' points')  
 print('-------------------------------------------------------------------------------------------')
+
+pickle.dump(lasso_models, open('lasso.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(ridge_models, open('ridge.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
