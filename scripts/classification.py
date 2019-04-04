@@ -1,4 +1,5 @@
 import pickle
+
 import numpy as np
 import pandas as pd
 from sklearn import model_selection, naive_bayes, svm
@@ -29,13 +30,14 @@ def runScript():
     predictions_nb = naive.predict(test_x)
     print("Naive Bayes Accuracy Score -> ", accuracy_score(predictions_nb, test_y)*100)
 
-    SVM = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
-    SVM.fit(train_x, train_y)
+    svm_model = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
+    svm_model.fit(train_x, train_y)
 
-    predictions_SVM = SVM.predict(test_x)
-    print("SVM Accuracy Score -> ", accuracy_score(predictions_SVM, test_y)*100)
+    predictions_svm = svm_model.predict(test_x)
+    print("SVM Accuracy Score -> ", accuracy_score(predictions_svm, test_y)*100)
 
     pickle.dump(naive, open('nb_classifier.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+    pickle.dump(naive, open('svm_classifier.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 
 def getPointsForGames(games, data):
 

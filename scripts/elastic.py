@@ -18,24 +18,24 @@ for val in players:
     train[val] = train_tmp
     test[val] = test_tmp
 
-elastic_models={}
-finalError=[]
+elastic_models = {}
+finalError = []
 for val in players:
 
-    errors2=[]
+    errors2 = []
 
     ENreg = ElasticNet(alpha=0.5, l1_ratio=0.5, normalize=False)
     ENreg.fit(train[val]['DEFENSIVE_RATING'].values.reshape(-1, 1), train[val]['POINTS'])
-    elastic_models[val]=ENreg
+    elastic_models[val] = ENreg
     
     prediction = ENreg.predict(test[val]['DEFENSIVE_RATING'].values.reshape(-1, 1))
     #print(subset)
     prediction = np.round(prediction, 0)
-    cnt=0
-    compare={}
+    cnt = 0
+    compare = {}
     for val1 in prediction:
         compare[val1] = test[val]['POINTS'].values[cnt]
-        cnt+= 1
+        cnt += 1
 
     for i in range(len(prediction)):
         errors2.append(abs(prediction[i] - test[val]['POINTS'].values[i]))
