@@ -2,8 +2,10 @@ import pickle
 
 import numpy as np
 import pandas as pd
+from math import sqrt
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score, mean_squared_error
 
 data = pd.read_csv("../data/dataSet_processed.csv")
 players = data.PLAYER_NAME.unique()
@@ -20,8 +22,8 @@ for val in players:
     test[val] = test_tmp
 
 for val in players:
-    est = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1,
-        max_depth=0.5, random_state=0, loss='ls')
+    est = GradientBoostingRegressor(n_estimators=200, learning_rate=0.5,
+                                    max_depth=0.5, random_state=0, loss='ls')
     est.fit(train[val]['DEFENSIVE_RATING'].values.reshape(-1, 1), train[val]['POINTS'])
     gbtrees_models[val] = est
 
@@ -29,8 +31,11 @@ for val in players:
 finalError = []
 ### Test
 for val in players:
-    errors2 = [] 
+    errors2 = []
     prediction = est.predict(test[val]['DEFENSIVE_RATING'].values.reshape(-1, 1))
+
+    val_prediction = prediction
+    val_actual = test[val]['POINTS'].values
 
     prediction = np.round(prediction, 0)
     cnt = 0
@@ -40,7 +45,13 @@ for val in players:
 
     err2 = np.mean(errors2)
     finalError.append(err2)
-    #print('----Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) + ' is in average ' + str(err2) + ' points')
+    '''
+    print('----RMS Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) 
+          + ' is ' + str(sqrt(mean_squared_error(val_actual, val_prediction))*100) + ' percent')
+    print('R Squared Error for player ' + str(test[val]['PLAYER_NAME'].values[0]) 
+          + ' is ' + str(r2_score(val_actual, val_prediction)*100) + ' percent')
+    '''
+
 
 print('----Average error for all players (gbtrees): ' + str(np.mean(finalError)) + ' points')  
 print('-------------------------------------------------------------------------------------------')
