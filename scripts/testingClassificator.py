@@ -3,7 +3,7 @@ import pickle
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import f1_score
 
 from process_players import fix_team_name
 
@@ -46,7 +46,7 @@ def get_predictions(data, classifier, models, players):
 
         predictions_away = []
         j = 0
-        for player in players[home_team]:
+        for player in players[visiting_team]:
             if j == 11:
                 break
             score = np.round(models[player].predict(
@@ -77,6 +77,8 @@ def run_script():
     lasso_model = pickle.load(open('lasso.pkl', 'rb'))
     ridge_model = pickle.load(open('ridge.pkl', 'rb'))
     gbtrees_model = pickle.load(open('gbtrees.pkl', 'rb'))
+    soft_model = pickle.load(open('soft.pkl', 'rb'))
+    hard_model = pickle.load(open('hard.pkl', 'rb'))
 
     nb_classifier = pickle.load(open('nb_classifier.pkl', 'rb'))
     svm_classifier = pickle.load(open('svm_classifier.pkl', 'rb'))
@@ -104,11 +106,16 @@ def run_script():
     predicted_gbtrees_svm = get_predictions(data, svm_classifier, gbtrees_model, players)
     print("Naive Bayes Accuracy Score -> ", f1_score(y_pred=predicted_gbtrees_nb, y_true=real_outcome)*100)
     print('SVM Accuracy Score -> ', f1_score(y_pred=predicted_gbtrees_svm, y_true=real_outcome)*100)
+
+    print('=================Soft voting model=================')
+    predicted_soft = get_predictions(data, soft_model, lasso_model, players)
+    print("Soft Score -> ", f1_score(y_pred=predicted_soft, y_true=real_outcome)*100)
+
+    print('=================Hard voting model=================')
+    predicted_hard = get_predictions(data, hard_model, lasso_model, players)
+    print("Hard Score -> ", f1_score(y_pred=predicted_hard, y_true=real_outcome)*100)
     # datumski prvu utakmicu
     # l1 koji atributi uticu na krajnji rezultat
-    # kombinacija metoda
-    # majority voting, stacking
-
 
 if __name__ == "__main__":
     run_script()

@@ -3,13 +3,13 @@ import pickle
 import numpy as np
 import pandas as pd
 from sklearn import naive_bayes, svm
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, log_loss
+from sklearn.ensemble import VotingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 
-def runScript():
+def run_script():
     #np.random.seed(500)
     data = pd.read_csv("../data/dataSet_processed.csv")
     games = data.GAME_ID.unique()
@@ -28,20 +28,39 @@ def runScript():
     naive.fit(train_x, train_y)
 
     predictions_nb = naive.predict(test_x)
-    print("Naive Bayes Accuracy Score -> ", f1_score(predictions_nb, test_y)*100)
+    print("Naive Bayes Accuracy Score -> ", f1_score(test_y, predictions_nb)*100)
 
     svm_model = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
     svm_model.fit(train_x, train_y)
 
     predictions_svm = svm_model.predict(test_x)
-    print("SVM Accuracy Score -> ", f1_score(predictions_svm, test_y)*100)
+    print("SVM Accuracy Score -> ", f1_score(test_y, predictions_svm)*100)
 
     pickle.dump(naive, open('nb_classifier.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
     pickle.dump(naive, open('svm_classifier.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 
+    print('Stacking and majority voting start')
+    svm_model.probability = True
+    soft = VotingClassifier(estimators=[('naive', naive), ('svm', svm_model)], 
+                            weights=[1, 3], voting='soft')
+    soft.fit(train_x, train_y)
+    predictions_soft = soft.predict(test_x)
+    print('Log loss: ', log_loss(test_y, predictions_soft))
+    print("Voting Accuracy Score -> ", f1_score(test_y, predictions_soft)*100)
+
+    hard = VotingClassifier(estimators=[('naive', naive), ('svm', svm_model)], 
+                            weights=[1, 3], voting='hard')
+    hard.fit(train_x, train_y)
+    predictions_hard = hard.predict(test_x)
+    print('Log loss: ', log_loss(test_y, predictions_hard))
+    print("Voting Accuracy Score -> ", f1_score(test_y, predictions_hard)*100)
+
+    pickle.dump(soft, open('soft.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+    pickle.dump(hard, open('hard.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
+
 def get_points_for_games(games, data):
 
-    x_data = np.zeros(24) #[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    x_data = np.zeros(24)
     y_data = []
     for game in games:
         is_game = data['GAME_ID'] == game
@@ -65,15 +84,15 @@ def get_points_for_games(games, data):
 
         if len(away) < 12:
             for i in range(12 - len(away)):
-                new_row = pd.DataFrame({'GAME_ID' : [away['GAME_ID'].iloc[0]], 
-                                        'LOCATION' : ['A'], 
-                                        'W/L' : [away['W/L'].iloc[0]], 
-                                        'DEFENSIVE_RATING' : [away['DEFENSIVE_RATING'].iloc[0]], 
-                                        'PLAYER_NAME' : [''], 
-                                        'PLAYER_ID' : [i], 
-                                        'POINTS' : [0], 
-                                        'TEAM' : [away['TEAM'].iloc[0]], 
-                                        'OPPOSING_TEAM' : [away['OPPOSING_TEAM'].iloc[0]], 
+                new_row = pd.DataFrame({'GAME_ID' : [away['GAME_ID'].iloc[0]],
+                                        'LOCATION' : ['A'],
+                                        'W/L' : [away['W/L'].iloc[0]],
+                                        'DEFENSIVE_RATING' : [away['DEFENSIVE_RATING'].iloc[0]],
+                                        'PLAYER_NAME' : [''],
+                                        'PLAYER_ID' : [i],
+                                        'POINTS' : [0],
+                                        'TEAM' : [away['TEAM'].iloc[0]],
+                                        'OPPOSING_TEAM' : [away['OPPOSING_TEAM'].iloc[0]],
                                         'OUTCOME' : [away['OUTCOME'].iloc[0]]})
                 away = pd.concat([away, new_row]).reset_index(drop=True)
 
@@ -88,4 +107,4 @@ def get_points_for_games(games, data):
     return (x_data, y_data)
 
 if __name__ == "__main__":
-    runScript()
+    run_script()
