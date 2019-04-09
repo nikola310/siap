@@ -6,7 +6,9 @@ import pandas as pd
 from sklearn.metrics import f1_score
 
 from process_players import fix_team_name
+from classification import remove_extra_elements
 
+PLAYER_NUM = 12
 
 def get_outcome(data):
     real_outcome = np.array([0])
@@ -34,31 +36,31 @@ def get_predictions(data, classifier, models, players):
         predictions_home = []
         j = 0
         for player in players[home_team]:
-            if j == 11:
+            if j == PLAYER_NUM - 1:
                 break
             score = np.round(models[player].predict(np.array([defensive_rating]).reshape(-1, 1))[0])
             predictions_home.append(score)
             j += 1
 
-        if len(predictions_home) < 12:
-            for _ in range(12 - len(predictions_home)):
+        if len(predictions_home) < PLAYER_NUM:
+            for _ in range(PLAYER_NUM - len(predictions_home)):
                 predictions_home.append(0)
 
         predictions_away = []
         j = 0
         for player in players[visiting_team]:
-            if j == 11:
+            if j == PLAYER_NUM - 1:
                 break
             score = np.round(models[player].predict(
                 np.array([defensive_rating_home]).reshape(-1, 1))[0])
             predictions_away.append(score)
             j += 1
 
-        if len(predictions_away) < 12:
-            for _ in range(12 - len(predictions_away)):
+        if len(predictions_away) < PLAYER_NUM:
+            for _ in range(PLAYER_NUM - len(predictions_away)):
                 predictions_away.append(0)
 
-        predictions = predictions_home + predictions_away
+        predictions = remove_extra_elements(predictions_home) + remove_extra_elements(predictions_away)
 
         pred = classifier.predict(np.array(predictions).reshape(1, -1))
         predicted_outcome = np.vstack([predicted_outcome, pred])

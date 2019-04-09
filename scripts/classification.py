@@ -8,6 +8,7 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
+PLAYER_NUM = 12
 
 def run_script():
     #np.random.seed(500)
@@ -60,7 +61,7 @@ def run_script():
 
 def get_points_for_games(games, data):
 
-    x_data = np.zeros(24)
+    x_data = np.zeros(2*PLAYER_NUM)
     y_data = []
     for game in games:
         is_game = data['GAME_ID'] == game
@@ -68,8 +69,8 @@ def get_points_for_games(games, data):
         subset = subset.sort_values(by=['LOCATION'], ascending=False)
         home = subset[subset.LOCATION == 'H']
         away = subset[subset.LOCATION == 'A']
-        if len(home) < 12:
-            for i in range(12 - len(home)):
+        if len(home) < PLAYER_NUM:
+            for i in range(PLAYER_NUM - len(home)):
                 new_row = pd.DataFrame({'GAME_ID' : [home['GAME_ID'].iloc[0]],
                                         'LOCATION' : ['H'],
                                         'W/L' : [home['W/L'].iloc[0]],
@@ -82,8 +83,8 @@ def get_points_for_games(games, data):
                                         'OUTCOME' : [home['OUTCOME'].iloc[0]]})
                 home = pd.concat([home, new_row]).reset_index(drop=True)
 
-        if len(away) < 12:
-            for i in range(12 - len(away)):
+        if len(away) < PLAYER_NUM:
+            for i in range(PLAYER_NUM - len(away)):
                 new_row = pd.DataFrame({'GAME_ID' : [away['GAME_ID'].iloc[0]],
                                         'LOCATION' : ['A'],
                                         'W/L' : [away['W/L'].iloc[0]],
@@ -96,7 +97,7 @@ def get_points_for_games(games, data):
                                         'OUTCOME' : [away['OUTCOME'].iloc[0]]})
                 away = pd.concat([away, new_row]).reset_index(drop=True)
 
-        points = home.POINTS.tolist() + away.POINTS.tolist()
+        points = remove_extra_elements(home.POINTS.tolist()) + remove_extra_elements(away.POINTS.tolist())
         new_row = np.array(points)
         outcome = home.OUTCOME.iloc[0]
         #pointsAll.append(points)
@@ -105,6 +106,13 @@ def get_points_for_games(games, data):
 
     x_data = np.delete(x_data, (0), axis=0)
     return (x_data, y_data)
+
+def remove_extra_elements(l):
+    if len(l) - PLAYER_NUM > 0:
+        n = len(l) - PLAYER_NUM
+        return l[:-n or None]
+    else:
+        return l
 
 if __name__ == "__main__":
     run_script()
