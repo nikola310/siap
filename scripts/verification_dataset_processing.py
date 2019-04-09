@@ -29,8 +29,21 @@ for game in data.values:
     processed.append(game)
     print(game)
 
+write=[]
+pairs=[]
+for game in processed:
+    firstGame=True
+    for h,a in pairs:
+        if (h==game[2] and a==game[4]) or (h==game[4] and a==game[2]):
+            firstGame=False
+            
+    if firstGame:
+        pairs.append((game[2],game[4]))
+        write.append(game)
+        
+
 with open('../data/season1516processed.csv', 'w', newline='') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
     wr.writerow(['DATE', 'START', 'VISITOR', 'V_PTS', 'HOME', 'H_PTS', 'OT', 'ATTENDANCE', 'V_DEFRTG', 'H_DEFRTG'])
-    for row in processed:
+    for row in write:
         wr.writerow(row)
