@@ -85,38 +85,46 @@ def run_script():
     nb_classifier = pickle.load(open('nb_classifier.pkl', 'rb'))
     svm_classifier = pickle.load(open('svm_classifier.pkl', 'rb'))
 
-    print('=====================Elastic model=====================')
-    predicted_elastic_nb = get_predictions(data, nb_classifier, elastic_model, players)
-    predicted_elastic_svm = get_predictions(data, svm_classifier, elastic_model, players)
-    print("Naive Bayes Accuracy Score -> ", f1_score(y_pred=predicted_elastic_nb, y_true=real_outcome)*100)
-    print('SVM Accuracy Score -> ', f1_score(y_pred=predicted_elastic_svm, y_true=real_outcome)*100)
-
     print('=====================Lasso model=====================')
     predicted_lasso_nb = get_predictions(data, nb_classifier, lasso_model, players)
     predicted_lasso_svm = get_predictions(data, svm_classifier, lasso_model, players)
+    predicted_lasso_soft = get_predictions(data, soft_model, lasso_model, players)
+    predicted_lasso_hard = get_predictions(data, hard_model, lasso_model, players)
     print("Naive Bayes Accuracy Score -> ", f1_score(y_pred=predicted_lasso_nb, y_true=real_outcome)*100)
     print('SVM Accuracy Score -> ', f1_score(y_pred=predicted_lasso_svm, y_true=real_outcome)*100)
+    print("Soft Score -> ", f1_score(y_pred=predicted_lasso_soft, y_true=real_outcome)*100)
+    print("Hard Score -> ", f1_score(y_pred=predicted_lasso_hard, y_true=real_outcome)*100)
 
     print('=====================Ridge model=====================')
     predicted_ridge_nb = get_predictions(data, nb_classifier, ridge_model, players)
     predicted_ridge_svm = get_predictions(data, svm_classifier, ridge_model, players)
+    predicted_ridge_soft = get_predictions(data, soft_model, ridge_model, players)
+    predicted_ridge_hard = get_predictions(data, hard_model, ridge_model, players)
     print("Naive Bayes Accuracy Score -> ", f1_score(y_pred=predicted_ridge_nb, y_true=real_outcome)*100)
     print('SVM Accuracy Score -> ', f1_score(y_pred=predicted_ridge_svm, y_true=real_outcome)*100)
+    print("Soft Score -> ", f1_score(y_pred=predicted_ridge_soft, y_true=real_outcome)*100)
+    print("Hard Score -> ", f1_score(y_pred=predicted_ridge_hard, y_true=real_outcome)*100)
+    
+    print('=====================Elastic model=====================')
+    predicted_elastic_nb = get_predictions(data, nb_classifier, elastic_model, players)
+    predicted_elastic_svm = get_predictions(data, svm_classifier, elastic_model, players)
+    predicted_elastic_soft = get_predictions(data, soft_model, elastic_model, players)
+    predicted_elastic_hard = get_predictions(data, hard_model, elastic_model, players)
+    print("Naive Bayes Accuracy Score -> ", f1_score(y_pred=predicted_elastic_nb, y_true=real_outcome)*100)
+    print('SVM Accuracy Score -> ', f1_score(y_pred=predicted_elastic_svm, y_true=real_outcome)*100)
+    print("Soft Score -> ", f1_score(y_pred=predicted_elastic_soft, y_true=real_outcome)*100)
+    print("Hard Score -> ", f1_score(y_pred=predicted_elastic_hard, y_true=real_outcome)*100)
 
     print('=============Gradient boosted trees model=============')
     predicted_gbtrees_nb = get_predictions(data, nb_classifier, gbtrees_model, players)
     predicted_gbtrees_svm = get_predictions(data, svm_classifier, gbtrees_model, players)
+    predicted_gbtrees_soft = get_predictions(data, soft_model, gbtrees_model, players)
+    predicted_gbtrees_hard = get_predictions(data, hard_model, gbtrees_model, players)
     print("Naive Bayes Accuracy Score -> ", f1_score(y_pred=predicted_gbtrees_nb, y_true=real_outcome)*100)
     print('SVM Accuracy Score -> ', f1_score(y_pred=predicted_gbtrees_svm, y_true=real_outcome)*100)
+    print("Soft Score -> ", f1_score(y_pred=predicted_gbtrees_soft, y_true=real_outcome)*100)
+    print("Hard Score -> ", f1_score(y_pred=predicted_gbtrees_hard, y_true=real_outcome)*100)
 
-    print('=================Soft voting model=================')
-    predicted_soft = get_predictions(data, soft_model, lasso_model, players)
-    print("Soft Score -> ", f1_score(y_pred=predicted_soft, y_true=real_outcome)*100)
-
-    print('=================Hard voting model=================')
-    predicted_hard = get_predictions(data, hard_model, lasso_model, players)
-    print("Hard Score -> ", f1_score(y_pred=predicted_hard, y_true=real_outcome)*100)
-    # datumski prvu utakmicu
     # l1 koji atributi uticu na krajnji rezultat
 
 if __name__ == "__main__":

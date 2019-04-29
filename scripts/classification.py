@@ -8,7 +8,7 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-PLAYER_NUM = 12
+PLAYER_NUM = 10
 
 def run_script():
     #np.random.seed(500)
@@ -41,15 +41,19 @@ def run_script():
     pickle.dump(naive, open('svm_classifier.pkl', 'wb'), protocol=pickle.HIGHEST_PROTOCOL)
 
     print('Stacking and majority voting start')
-    svm_model.probability = True
-    soft = VotingClassifier(estimators=[('naive', naive), ('svm', svm_model)], 
+    naive_s = naive_bayes.MultinomialNB()
+    svm_model_s = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
+    svm_model_s.probability = True
+    soft = VotingClassifier(estimators=[('naive', naive_s), ('svm', svm_model_s)], 
                             weights=[1, 3], voting='soft')
     soft.fit(train_x, train_y)
     predictions_soft = soft.predict(test_x)
     print('Log loss: ', log_loss(test_y, predictions_soft))
     print("Voting Accuracy Score -> ", f1_score(test_y, predictions_soft)*100)
-
-    hard = VotingClassifier(estimators=[('naive', naive), ('svm', svm_model)], 
+    naive_h = naive_bayes.MultinomialNB()
+    svm_model_h = svm.SVC(C=1.0, kernel='linear', degree=3, gamma='auto')
+    
+    hard = VotingClassifier(estimators=[('naive', naive_h), ('svm', svm_model_h)], 
                             weights=[1, 3], voting='hard')
     hard.fit(train_x, train_y)
     predictions_hard = hard.predict(test_x)
